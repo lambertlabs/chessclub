@@ -43,19 +43,19 @@ def main_menu():
 
 def add_tournament():
     tournament = controllers.create_model(models.Tournament)
-    tournaments.append(tournament.to_dict())
+    tournaments.append(tournament)
     main_menu()
 
 
 def add_player():
     player = controllers.create_model(models.Player)
-    players.append(player.to_dict())
+    players.append(player)
     main_menu()
 
 
 def view_tournaments():
     function_mapping = [
-        (tournament['name'], view_tournament, i) for i, tournament in enumerate(tournaments)
+        (tournament.name, view_tournament, i) for i, tournament in enumerate(tournaments)
     ]
     if function_mapping:
         _list_choices_and_execute(function_mapping)
@@ -66,7 +66,7 @@ def view_tournaments():
 
 def view_tournament(i):
     tournament = tournaments[i]
-    print(f'Tournament {tournament["name"]}')
+    print(f'Tournament {tournament.name}')
     function_mapping = [
         ('Start New Round', None),
         ('View Rounds', None),
@@ -82,13 +82,13 @@ def view_tournament(i):
 
 def add_players_to_tournament(tournament_index):
     for i, player in enumerate(players):
-        print(f'{i}: {player["first_name"]} {player["last_name"]}')
+        print(f'{i}: {player.first_name} {player.last_name}')
 
     while True:
         players_list = input(
             'Please enter the players you would like to add as a list eg. [0, 3, 4. 5]')
         tournament = tournaments[tournament_index]
-        tournament_players = tournament['players']
+        tournament_players = tournament.players
         try:
             players_list = list(players_list)
             players_list = [int(i) for i in players_list]
@@ -100,20 +100,20 @@ def add_players_to_tournament(tournament_index):
             try:
                 player = players[i]
                 if i in tournament_players:
-                    print(f'{player["first_name"]} {player["last_name"]} is already added, skipping...')
+                    print(f'{player.first_name} {player.last_name} is already added, skipping...')
                 else:
                     tournament_players.append(i)
             except IndexError:
                 print(f'Player {i} does not exist. skipping...')
         break
-    tournament['players'] = tournament_players
+    tournament.players = tournament_players
     view_tournament(tournament_index)
 
 
 def _view_players(function, *args, players_list=players):
     function_mapping = [
-        (f'{player["first_name"]} {player["last_name"]}', function, player_index, *args)
-        for player_index, player in enumerate(players)
+        (f'{player.first_name} {player.last_name}', function, player_index, *args)
+        for player_index, player in enumerate(players_list)
     ]
     if function_mapping:
         _list_choices_and_execute(function_mapping)
@@ -128,12 +128,13 @@ def view_players():
 
 def view_tournament_players(tournament_index):
     tournament = tournaments[tournament_index]
-    _view_players(view_tournament_player, tournament_index, players_list=tournament['players'])
+    player_list = [players[i] for i in tournament.players]
+    _view_players(view_tournament_player, tournament_index, players_list=player_list)
 
 
 def view_player(i):
     player = players[i]
-    print(f'Player: {player["first_name"]} {player["last_name"]}')
+    print(f'Player: {player.first_name} {player.last_name}')
     function_mapping = [
         ('View Matches', None),
         ('Edit Player', None),
