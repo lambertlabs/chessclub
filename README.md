@@ -6,4 +6,4 @@ run `pip install -r requirements.txt`
 
 Run the program via the entry point main.py
 
-python main.py
+```python main.py```
